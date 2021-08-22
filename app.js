@@ -13,6 +13,10 @@ const client = new line.Client(config);
 
 const app = express();
 
+app.get("/", function (req, res) {
+  res.send("<h1>online!</h1>")
+})
+
 app.post("/linewebhook", line.middleware(config), (req, res) => {
   Promise.all(req.body.events.map(handleEvent))
     .then((result) => res.json(result))
@@ -33,6 +37,6 @@ async function handleEvent(event) {
 }
 
 const port = process.env.PORT || 3000;
-app.listen(process.env.PORT||port, () => {
+app.listen(port, () => {
   console.log(`listening on ${port}`);
 });
