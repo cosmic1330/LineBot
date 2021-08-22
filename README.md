@@ -35,3 +35,10 @@ install [ngrok](https://dashboard.ngrok.com/get-started/setup) and cd to ngrok's
 npm i
 npm start
 ```
+
+## Deploy Heroku
+```cmd
+heroku login
+heroku create fruit-price-line-bot
+git push heroku master
+```
