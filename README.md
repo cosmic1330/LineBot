@@ -40,5 +40,6 @@ npm start
 ```cmd
 heroku login
 heroku create fruit-price-line-bot
+heroku git:remote -a fruit-price-line-bot
 git push heroku master
 ```
