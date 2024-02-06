@@ -1,7 +1,8 @@
 const express = require("express");
 const line = require("@line/bot-sdk");
 const manager = require("./message/manager");
-require('dotenv').config();
+const connectToDatabase = require("./db/connect");
+require("dotenv").config();
 
 const config = {
   channelSecret: process.env.CHANNEL_SECRET,
@@ -14,8 +15,8 @@ const client = new line.Client(config);
 const app = express();
 
 app.get("/", function (req, res) {
-  res.send("<h1>online!</h1>")
-})
+  res.send("<h1>online!</h1>");
+});
 
 app.post("/linewebhook", line.middleware(config), (req, res) => {
   Promise.all(req.body.events.map(handleEvent))
@@ -24,6 +25,24 @@ app.post("/linewebhook", line.middleware(config), (req, res) => {
       console.error(err);
       res.status(500).end();
     });
+});
+
+app.post("/mongodb", async (req, res) => {
+  try {
+    const { client } = await connectToDatabase();
+    if (client) {
+      await client.db("admin").command({ ping: 1 });
+      console.log(
+        "Pinged your deployment. You successfully connected to MongoDB!"
+      );
+      res.send("MongoDB 連接成功");
+    } else {
+      res.send("MongoDB 未連接");
+    }
+  } catch (error) {
+    console.log(error)
+    res.send("MongoDB 連接失敗");
+  }
 });
 
 async function handleEvent(event) {

@@ -1,4 +1,4 @@
-require('dotenv').config();
+require("dotenv").config();
 var MongoClient = require("mongodb").MongoClient;
 
 const MONGODB_URI = process.env.MONGODB_URI;
@@ -22,19 +22,16 @@ if (!cached) {
   cached = global.mongo = { conn: null, promise: null };
 }
 
+console.log({MONGODB_URI, MONGODB_DB, cached})
+
 async function connectToDatabase() {
   if (cached.conn) {
     return cached.conn;
   }
-
   if (!cached.promise) {
-    const opts = {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    };
-
-    cached.promise = MongoClient.connect(MONGODB_URI, opts).then((client) => {
-      console.log('connecting Mongodb...')
+    const client = new MongoClient(MONGODB_URI);
+    cached.promise = client.connect().then((client) => {
+      console.log(`Connecting to MongoDB [${MONGODB_URI}]`);
       return {
         client,
         db: client.db(MONGODB_DB),
@@ -44,4 +41,12 @@ async function connectToDatabase() {
   cached.conn = await cached.promise;
   return cached.conn;
 }
+
+process.on('SIGINT', () => {
+  cached?.conn?.client?.close(() => {
+    console.log('Close MongoDB');
+    process.exit(0);
+  });
+});
+
 module.exports = connectToDatabase;
