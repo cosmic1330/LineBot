@@ -1,40 +1,99 @@
 const {
-  findAllMarket,
-  findFruit,
-  findAllFruit,
-  findPrice,
-  findAllPrice,
+  updateData,
+  getPomegranatePrice
 } = require("./methods");
+/*
+回復種類參考:
+https://developers.line.biz/en/docs/messaging-api/message-types/#confirm-template
+ */
 
 async function manager(words) {
   let regLike = /^我想找+/;
   let regAllPrice = /^查詢全部+/;
   let regPrice = /^查詢+/;
   try {
-    let response;
-    if (words === "市場") {
-      response = await findAllMarket();
-    } else if (words === "水果") {
-      response = await findAllFruit();
-    } else if (regLike.test(words)) {
-      let str = words.replace("我想找", "");
-      res = await findFruit(str);
-      response = notFound(res, str);
-    } else if (regAllPrice.test(words)) {
-      let str = words.replace("查詢全部", "");
-      res = await findAllPrice(str);
-      response = notFound(res, str);
-    } else if (regPrice.test(words)) {
-      let str = words.replace("查詢", "");
-      res = await findPrice(str);
-      response = notFound(res, str);
-    } else {
-      response = `你輸入的關鍵字:${words},目前不提供支援。\n\n支援關鍵字:\n- 市場\n- 我想找<水果名稱>\n- 查詢全部<水果代碼>\n- 查詢<水果代碼> \n(台北一、台北二、高雄、鳳山)`;
+    // 實驗
+    if (words === "#貼圖") {
+      return {
+        type: "sticker",
+        packageId: "446",
+        stickerId: "1988",
+      };
+    } else if (words === "#圖片") {
+      return {
+        type: "image",
+        originalContentUrl: `https://tse3.mm.bing.net/th?id=OIP.m59pGYADt84jthK5J8LTowHaE8&pid=Api&P=0&h=180`,
+        previewImageUrl: `https://media.newjobs.com/niche/images/articles/Liz/Job.jpg`,
+        animated: true,
+      };
+    } else if (words === "#位置") {
+      return {
+        type: "location",
+        title: "my location",
+        address: "1-3 Kioicho, Chiyoda-ku, Tokyo, 102-8282, Japan",
+        latitude: 35.67966,
+        longitude: 139.73669,
+      };
+    } else if (words === "#選單") {
+      return {
+        type: "text", // 1
+        text: "Select your text or send me your location!",
+        quickReply: {
+          // 2
+          items: [
+            {
+              type: "action", // 3
+              action: {
+                type: "message",
+                label: "image",
+                text: "#圖片",
+              },
+            },
+            {
+              type: "action",
+              action: {
+                type: "message",
+                label: "sticker",
+                text: "#貼圖",
+              },
+            },
+            {
+              type: "action", // 4
+              action: {
+                type: "location",
+                label: "Send location",
+              },
+            },
+          ],
+        },
+      };
     }
-    return response;
+    // 指令
+    if (words === "更新資料") {
+      const count = await updateData();
+      return { type: "text", text:`更新了${count}筆資料` };
+    } else if (words === "芭樂行情") {
+      const text = await getPomegranatePrice();
+      return { type: "text", text };
+    }
   } catch (error) {
     console.log(error);
-    return "系統錯誤:" + error;
+    return {
+      type: "text",
+      text: "$出錯囉...$",
+      emojis: [
+        {
+          index: 0,
+          productId: "5ac1bfd5040ab15980c9b435",
+          emojiId: "074",
+        },
+        {
+          index: 7,
+          productId: "5ac1bfd5040ab15980c9b435",
+          emojiId: "042",
+        },
+      ],
+    };
   }
 }
 module.exports = manager;

@@ -1,20 +1,34 @@
-const request = require("request");
+require("dotenv").config();
 
-function getTodayPrice() {
+
+
+function getTodayPrice(date, CropCode) {
   return new Promise(function (resolve, reject) {
-    request.get(
-      {
-        url: `https://data.coa.gov.tw/Service/OpenData/FromM/FarmTransData.aspx`,
+    const params = new URLSearchParams({
+      Start_time: date,
+      End_time: date,
+      CropCode
+    });
+    console.log(params)
+    const url = `https://data.moa.gov.tw/api/v1/AgriProductsTransType?${params.toString()}`;
+
+    fetch(url, {
+      headers: {
+        api_key: process.env.COA_APIKEY,
       },
-      (error, response, body) => {
-        if (error) reject(error);
-        try {
-          resolve(body);
-        } catch (error) {
-          resolve(false);
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
         }
-      }
-    );
+        return response.json();
+      })
+      .then((data) => {
+        resolve(data);
+      })
+      .catch((error) => {
+        reject(error);
+      });
   });
 }
 module.exports = getTodayPrice;

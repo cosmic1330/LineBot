@@ -2,6 +2,7 @@ const express = require("express");
 const line = require("@line/bot-sdk");
 const manager = require("./message/manager");
 const connectToDatabase = require("./db/connect");
+const getTodayPrice = require("./db/methods/api")
 require("dotenv").config();
 
 const config = {
@@ -14,11 +15,16 @@ const client = new line.Client(config);
 
 const app = express();
 
+// 解析 application/json 格式的请求体
+app.use(express.json());
+// 解析 application/x-www-form-urlencoded 格式的请求体
+app.use(express.urlencoded({ extended: false }));
+
 app.get("/", function (req, res) {
   res.send("<h1>online!</h1>");
 });
 
-app.post("/linewebhook", line.middleware(config), (req, res) => {
+app.post("/line_webhook", line.middleware(config), (req, res) => {
   Promise.all(req.body.events.map(handleEvent))
     .then((result) => res.json(result))
     .catch((err) => {
@@ -27,7 +33,7 @@ app.post("/linewebhook", line.middleware(config), (req, res) => {
     });
 });
 
-app.post("/mongodb", async (req, res) => {
+app.post("/test_mongodb", async (req, res) => {
   try {
     const { client } = await connectToDatabase();
     if (client) {
@@ -45,17 +51,32 @@ app.post("/mongodb", async (req, res) => {
   }
 });
 
+app.post("/test_api", async (req, res) => {
+  try {
+    const data = await getTodayPrice(req.body);
+    res.send(data);
+  } catch (error) {
+    console.log(error)
+    res.send("連接失敗");
+  }
+});
+
+app.post("/test_message", async (req, res) => {
+  try {
+    const data = await manager(req.body.text);
+    res.send(data);
+  } catch (error) {
+    console.log(error)
+    res.send("manager出現錯誤");
+  }
+});
+
 async function handleEvent(event) {
   if (event.type !== "message" || event.message.type !== "text") {
     return Promise.resolve(null);
   }
-  let replyMsg = await manager(event.message.text);
-  const echo = { type: "text", text: replyMsg };
-
+  const echo = await manager(event.message.text);
   return client.replyMessage(event.replyToken, echo);
 }
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`listening on ${port}`);
-});
+module.exports = app;

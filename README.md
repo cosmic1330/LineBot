@@ -23,8 +23,11 @@ node .\db\test.js
 
 ## ENV
 ```cmd
-MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.mbygz.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
+MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.a7rte3w.mongodb.net/?retryWrites=true&w=majority
 MONGODB_DB=<database>
+CHANNEL_SECRET=<line channel secret>
+CHANNEL_ACCESSTOKEN=<line channel access token>
+COA_APIKEY=<gov api key>
 ```
 
 ## ngrok
@@ -43,3 +46,5 @@ heroku create fruit-price-line-bot
 heroku git:remote -a fruit-price-line-bot
 git push heroku master
 ```
+## Line Emoji List
+https://d.line-scdn.net/r/devcenter/sendable_line_emoji_list.pdf
