@@ -1,22 +1,15 @@
 # Line Bot
 
 ## Database 
-use Mongodb images or install Community
-
+use Mongodb images or Mongodb Atlas
 ```cmd
-docker run --name mongo4 -v C:\Users\yang\Desktop\projects\LineBot\db/data:/data/db -d -p 27017:27017 --rm mongo:4.1
+docker run --name mongo6 -v ./db/data:/data/db -d -p 27017:27017
 ```
-### How to get new data
-
+### How to run or test
 modify db\test.js content
-```js
-save()
-// run()
-// remove()
-```
-and cmd this in root
 ```cmd
-node .\db\test.js
+npm run start
+npm run test
 ```
 
 > please run remove() first before save()
@@ -28,7 +21,20 @@ MONGODB_DB=<database>
 CHANNEL_SECRET=<line channel secret>
 CHANNEL_ACCESSTOKEN=<line channel access token>
 COA_APIKEY=<gov api key>
+GOOGLE_APIKEY=<google api key>
+GOOGLE_SHEETID=<google sheet id>
+GOOGLE_SERVICE_CLIENTEMAIL=<google service account email>
+GOOGLE_SERVICE_PRIVATEKEY=<google service private key>
 ```
+- MONGODB env create from [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) or Local Mongodb
+
+- CHANNEL env create from [Line Developer](https://developers.line.biz/console/)
+
+- COA env create from [政府資料開放平台](https://data.coa.gov.tw/Service/OpenData/FromM/AgriiOT?$top=1000&$format=json)
+
+- GOOGLE env create from [Google Cloud Platform](https://console.cloud.google.com/)
+
+    ![google-env]("./images/254929.jpg")
 
 ## ngrok
 install [ngrok](https://dashboard.ngrok.com/get-started/setup) and cd to ngrok's folder and cmd `./ngrok http 3000`
@@ -36,7 +42,7 @@ install [ngrok](https://dashboard.ngrok.com/get-started/setup) and cd to ngrok's
 ## Quick Start
 ```cmd
 npm i
-npm start
+npm run dev
 ```
 
 ## Deploy Heroku
@@ -46,5 +52,26 @@ heroku create fruit-price-line-bot
 heroku git:remote -a fruit-price-line-bot
 git push heroku master
 ```
-## Line Emoji List
+
+## Deploy Vercel
+```json
+{
+    "version": 2,
+    "builds": [
+        {
+            "src": "server.js",
+            "use": "@vercel/node"
+        }
+    ],
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dest": "server.js"
+        }
+    ]
+}
+```
+
+## Reference
+### Line Emoji List
 https://d.line-scdn.net/r/devcenter/sendable_line_emoji_list.pdf

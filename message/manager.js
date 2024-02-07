@@ -1,7 +1,7 @@
 const {
   updateData,
   getPomegranatePrice
-} = require("./methods");
+} = require("./fruit");
 /*
 回復種類參考:
 https://developers.line.biz/en/docs/messaging-api/message-types/#confirm-template
@@ -68,7 +68,7 @@ async function manager(words) {
         },
       };
     }
-    // 指令
+    // Fruit
     if (words === "更新資料") {
       const count = await updateData();
       return { type: "text", text:`更新了${count}筆資料` };

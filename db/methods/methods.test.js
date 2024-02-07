@@ -1,7 +1,7 @@
 const find = require("./find");
 const insert = require("./insert");
 
-describe("Express Test", () => {
+describe("MongoDB Test", () => {
   beforeEach(async () => {});
 
   afterEach(async () => {});
