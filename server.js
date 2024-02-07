@@ -1,6 +1,12 @@
 const app = require("./app");
 
 const port = process.env.PORT || 7676;
-app.listen(port, () => {
-  console.log(`listening on ${port}`);
-});
+
+app.listen(port, (err, res) => {
+  if (err) {
+      console.log(err)
+      return res.status(500).send(err.message)
+  } else {
+      console.log('[INFO] Server Running on port:', port)
+  }
+})

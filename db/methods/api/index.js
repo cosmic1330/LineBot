@@ -9,7 +9,7 @@ function getTodayPrice(date, CropCode) {
       End_time: date,
       CropCode
     });
-    console.log(params)
+    console.log(`[INFO]${params}`)
     const url = `https://data.moa.gov.tw/api/v1/AgriProductsTransType?${params.toString()}`;
 
     fetch(url, {

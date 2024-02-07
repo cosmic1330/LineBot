@@ -6,13 +6,13 @@ const MONGODB_DB = process.env.MONGODB_DB;
 
 if (!MONGODB_URI) {
   throw new Error(
-    "Please define the MONGODB_URI environment variable inside .env.local"
+    "[ERROR]Please define the MONGODB_URI environment variable inside .env.local"
   );
 }
 
 if (!MONGODB_DB) {
   throw new Error(
-    "Please define the MONGODB_DB environment variable inside .env.local"
+    "[ERROR]Please define the MONGODB_DB environment variable inside .env.local"
   );
 }
 
@@ -31,7 +31,7 @@ async function connectToDatabase() {
   if (!cached.promise) {
     const client = new MongoClient(MONGODB_URI);
     cached.promise = client.connect().then((client) => {
-      console.log(`Connecting to MongoDB [${MONGODB_URI}]`);
+      console.log(`[INFO]Connecting to MongoDB: ${MONGODB_URI}`);
       return {
         client,
         db: client.db(MONGODB_DB),
@@ -44,7 +44,7 @@ async function connectToDatabase() {
 
 process.on('SIGINT', () => {
   cached?.conn?.client?.close(() => {
-    console.log('Close MongoDB');
+    console.log('[INFO]Close MongoDB');
     process.exit(0);
   });
 });

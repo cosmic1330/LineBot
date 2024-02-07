@@ -24,6 +24,10 @@ app.get("/", function (req, res) {
   res.send("<h1>online!</h1>");
 });
 
+app.get('/ping', (req, res) => {
+  res.send('pong 🏓')
+})
+
 app.post("/line_webhook", line.middleware(config), (req, res) => {
   Promise.all(req.body.events.map(handleEvent))
     .then((result) => res.json(result))
