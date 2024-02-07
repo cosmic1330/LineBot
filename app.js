@@ -16,9 +16,9 @@ const client = new line.Client(config);
 const app = express();
 
 // 解析 application/json 格式的请求体
-app.use(express.json());
+// app.use(express.json());
 // 解析 application/x-www-form-urlencoded 格式的请求体
-app.use(express.urlencoded({ extended: false }));
+// app.use(express.urlencoded({ extended: false }));
 
 app.get("/", function (req, res) {
   res.send("<h1>online!</h1>");
@@ -55,7 +55,7 @@ app.post("/test_mongodb", async (req, res) => {
   }
 });
 
-app.post("/test_api", async (req, res) => {
+app.post("/test_api", express.json(), async (req, res) => {
   try {
     const data = await getTodayPrice(req.body);
     res.send(data);
@@ -65,7 +65,7 @@ app.post("/test_api", async (req, res) => {
   }
 });
 
-app.post("/test_message", async (req, res) => {
+app.post("/test_message", express.json(), async (req, res) => {
   try {
     const data = await manager(req.body.text);
     res.send(data);
